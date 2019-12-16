@@ -1,0 +1,24 @@
+@import "variables.scss";
+
+.App {
+  padding: 2rem;
+  box-sizing: content-box;
+  text-align: center;
+}
+
+.logo {
+  max-width: 20rem;
+  margin: 0 auto;
+}
+
+.results {
+  font-style: italic;
+  font-weight: $font-semi-bold;
+  margin-bottom: $space-small;
+  color: $color-green;
+}
+
+.SuggestContainer {
+  display: flex;
+  flex-wrap: wrap;
+}

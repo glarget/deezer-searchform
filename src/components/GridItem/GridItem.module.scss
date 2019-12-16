@@ -1,0 +1,27 @@
+@import "../../variables.scss";
+
+.GridItem {
+  border-bottom: 1px solid $color-green;
+  box-sizing: border-box;
+  height: 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: 25%;
+  padding: 2rem;
+}
+
+.title,
+.titleAlbum {
+  font-weight: $font-semi-bold;
+  margin-bottom: $space-x-small;
+}
+
+.titleAlbum {
+  margin-bottom: $space-small;
+  display: inline-block;
+  font-style: italic;
+  color: $color-green;
+}
