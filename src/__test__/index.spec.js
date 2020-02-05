@@ -1,19 +1,44 @@
-import React from "react";
-import { shallow } from "enzyme";
-import { App as PureApp, mapStateToProps } from "../App";
+import React, { Suspense } from "react";
+import { shallow, mount } from "enzyme";
+import { App as PureApp, mapStateToProps, LazyGridItem } from "../App";
 
-const defaultProps = {
-  fetchSongs: jest.fn(),
-  filterByAlbum: jest.fn(),
-  songs: [],
-  error: "",
-  isFetching: false,
-  album: [],
-  artist: []
-};
 
 describe("<App>", () => {
+  const defaultProps = {
+    fetchSongs: jest.fn(),
+    filterByAlbum: jest.fn(),
+    songs: [],
+    error: "",
+    isFetching: false,
+    album: [],
+    artist: []
+  };
+  
+  describe('lifeCycle methods', () => {
+    describe('componentDidMount', () => {
+      it('should fetch the songs at the start', () => {
+        // Given
+        const tree = shallow(<PureApp {...defaultProps} />);
+
+        // When
+        tree.instance().componentDidMount()
+
+        // Then
+        expect(tree.instance().autocompleteSearchThrottled).toBeDefined()
+        
+      })
+    })
+  })
+
   describe("render()", () => {
+    describe('lazy GridItem component', () => {
+      it('should return a lazy component with a fallback text', () => {
+        const tree = mount(<Suspense fallback={<h3>...loading</h3>}><LazyGridItem/></Suspense>)
+  
+        expect(tree.find('h3').text()).toBe('...loading')
+      })
+    })
+
     it("should render by default", () => {
       // Given
       const tree = shallow(<PureApp {...defaultProps} />);

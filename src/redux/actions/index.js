@@ -11,7 +11,7 @@ export const fetchSongs = query => dispatch => {
   return axios
     .get("/search/track?q=" + query)
     .then(res => {
-      dispatch(fetchSongSuccess(res.data.data));
+      dispatch(fetchSongSuccess(res.data?.data));
     })
     .catch(err => {
       dispatch(fetchSongError(err.message));

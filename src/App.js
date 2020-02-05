@@ -1,7 +1,8 @@
-import React, { Component } from "react";
+import React, { Component, lazy, Suspense } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { throttle } from "throttle-debounce";
+import {Helmet} from "react-helmet";
 
 import styles from "./App.module.scss";
 import { fetchSongs, sortSongs, filterByAlbum } from "./redux/actions";
@@ -9,16 +10,16 @@ import { fetchSongs, sortSongs, filterByAlbum } from "./redux/actions";
 import { ReactComponent as DeezerLogo } from "./assets/icons/logo.svg";
 
 import GridHeader from "./components/GridHeader";
-import GridItem from "./components/GridItem";
 import SearchInput from "./components/SearchInput";
 import ErrorMessage from "./components/ErrorMessage";
 import LoaderSpinner from "./components/LoaderSpinner";
 
+export const LazyGridItem = lazy(() => import('./components/GridItem'))
+
 export class App extends Component {
-  constructor(props) {
-    super(props);
+  componentDidMount() {
     this.autocompleteSearchThrottled = throttle(300, this.fetchSongs);
-  }
+  };
 
   state = {
     ascendentId: false,
@@ -35,11 +36,13 @@ export class App extends Component {
   };
 
   renderGridItem = dataElement => (
-    <div className={styles.SuggestContainer}>
-      {dataElement.map((data, index) => {
-        return <GridItem key={index} {...data} />;
-      })}
-    </div>
+    <Suspense fallback={<h3>loading...</h3>}>
+      <div className={styles.SuggestContainer}>
+        {dataElement.map((data, index) => {
+          return <LazyGridItem key={index} {...data} />
+        })}
+      </div>
+    </Suspense>
   );
 
   handleSort = type => {
@@ -51,19 +54,17 @@ export class App extends Component {
       this.setState({ ascendentRank: !this.state.ascendentRank });
     }
 
-    const { songs, album } = this.props;
+    const { songs, album, sortSongs } = this.props;
 
     switch (type) {
       case "id":
-        songs &&
-          songs.length > 0 &&
+          songs?.length > 0 &&
           this.props.sortSongs(songs, "id", this.state.ascendentId);
-        album &&
-          album.length > 0 &&
+          album?.length > 0 &&
           this.props.sortSongs(album, "id", this.state.ascendentId);
         break;
       case "rank":
-        songs && this.props.sortSongs(songs, "rank", this.state.ascendentRank);
+        songs && sortSongs(songs, "rank", this.state.ascendentRank);
         break;
       default:
         break;
@@ -85,6 +86,10 @@ export class App extends Component {
 
     return (
       <div className={styles.App} data-test-id="app">
+        <Helmet>
+          <title>Deezer - music streaming | Try Flow, download &amp; listen to free music</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        </Helmet>
         <div className={styles.logo}>
           <DeezerLogo />
         </div>
